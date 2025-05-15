@@ -4,7 +4,7 @@
  * Plugin Name: Disable Comments
  * Plugin URI: https://wordpress.org/plugins/disable-comments/
  * Description: Allows administrators to globally disable comments on their site. Comments can be disabled according to post type. You could bulk delete comments using Tools.
- * Version: 2.5.0
+ * Version: 2.5.1
  * Author: WPDeveloper
  * Author URI: https://wpdeveloper.com
  * License: GPL-3.0+
@@ -14,9 +14,6 @@
  *
  * @package Disable_Comments
  */
-
-use Disable_Comments\Classes\EB_Promotion_Notice;
-use Disable_Comments\Classes\WPDeveloper_Plugin_Installer;
 
 if (!defined('ABSPATH')) {
 	exit;
@@ -41,7 +38,7 @@ class Disable_Comments {
 	}
 
 	function __construct() {
-		define('DC_VERSION', '2.5.0');
+		define('DC_VERSION', '2.5.1');
 		define('DC_PLUGIN_SLUG', 'disable_comments_settings');
 		define('DC_PLUGIN_ROOT_PATH', dirname(__FILE__));
 		define('DC_PLUGIN_VIEWS_PATH', DC_PLUGIN_ROOT_PATH . '/views/');
@@ -111,7 +108,6 @@ class Disable_Comments {
 
 		add_action('plugins_loaded', [$this, 'init_filters']);
 		add_action('wp_loaded', [$this, 'start_plugin_usage_tracking']);
-		add_action('wp_loaded', [$this, 'eb_promotion_notice']);
 	}
 
 	public function is_network_admin() {
@@ -142,18 +138,6 @@ class Disable_Comments {
 				$this->tracker->notice();
 			}
 		}
-	}
-
-	public function eb_promotion_notice() {
-		if (!class_exists('Disable_Comments\Classes\EB_Promotion_Notice')) {
-			include_once(DC_PLUGIN_ROOT_PATH . '/includes/EB_Promotion_Notice.php');
-		}
-		if (!class_exists('Disable_Comments\Classes\WPDeveloper_Plugin_Installer')) {
-			include_once(DC_PLUGIN_ROOT_PATH . '/includes/WPDeveloper_Plugin_Installer.php');
-		}
-
-		$eb_promotion_notice = new EB_Promotion_Notice();
-		$plugin_installer = new WPDeveloper_Plugin_Installer();
 	}
 
 	public function start_plugin_usage_tracking() {
@@ -621,7 +605,7 @@ class Disable_Comments {
 			}
 
 			// translators: %s: disabled post types.
-			echo '<div class="notice notice-warning"><p>' . sprintf(wp_kses_post(__('Note: The <em>Disable Comments</em> plugin is currently active, and comments are completely disabled on: %s. Many of the settings below will not be applicable for those post types.', 'disable-comments')), implode(esc_html__(', ', 'disable-comments'), $names_escaped)) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>' . sprintf(esc_html__('Note: The <em>Disable Comments</em> plugin is currently active, and comments are completely disabled on: %s. Many of the settings below will not be applicable for those post types.', 'disable-comments'), implode(esc_html__(', ', 'disable-comments'), $names_escaped)) . '</p></div>';
 		}
 	}
 
